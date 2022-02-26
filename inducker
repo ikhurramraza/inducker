@@ -1,0 +1,120 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# ================================================================================ #
+# ================================ HELPER METHODS ================================ #
+# ================================================================================ #
+
+exit_with_error() {
+  echo "$1" 1>&2
+  exit 1
+}
+
+command_available() {
+  command -v "$1" >/dev/null 2>&1 || exit_with_error "Please make sure $1 is installed."
+}
+
+# ================================================================================ #
+# =================================== CONSTANTS ================================== #
+# ================================================================================ #
+
+ENTRYPOINT="/bin/sh"
+MOUNT_LOCATION="/lords"
+WORKING_DIRECTORY=$(pwd)
+EXTRA_ARGS=()
+
+# ================================================================================ #
+# ==================================== USAGE ===================================== #
+# ================================================================================ #
+
+usage() {
+  cat <<HELP
+Usage: inducker IMAGE [OPTIONS] [-- EXTRA_ARGS]
+
+Bootstraps running a docker image in current directory.
+
+ARGUMENTS:
+  IMAGE                Docker image to use.
+  EXTRA_ARGS           Extra arguments to pass to docker run.
+
+OPTIONS:
+  --directory       Which directory to mount as working directory.    Default: ${WORKING_DIRECTORY}
+  --entrypoint      Command to launch inside the container.           Default: ${ENTRYPOINT}
+  --mount-location  Working directory path.                           Default: ${MOUNT_LOCATION}
+HELP
+}
+
+# ================================================================================ #
+# =============================== ARGUMENTS PARSING ============================== #
+# ================================================================================ #
+
+if [[ $# -eq 0 ]]; then
+  usage
+  exit 1
+elif [[ $# -eq 1 && $1 == "-h" || $1 == "--help" ]]; then
+  usage
+  exit 0
+else
+  IMAGE=$1
+  shift
+fi
+
+while test $# -gt 0; do
+  case "$1" in
+  --directory)
+    WORKING_DIRECTORY=$2
+    shift 2
+    ;;
+  --entrypoint)
+    ENTRYPOINT=$2
+    shift 2
+    ;;
+  --mount-location)
+    MOUNT_LOCATION=$2
+    shift 2
+    ;;
+  --)
+    shift
+    EXTRA_ARGS=("$@")
+    shift $#
+    ;;
+  *)
+    exit_with_error "Don't know how to handle: '$1'"
+    ;;
+  esac
+done
+
+# ================================================================================ #
+# ==================================== GUARDS ==================================== #
+# ================================================================================ #
+
+command_available docker
+
+docker info >/dev/null 2>&1 || exit_with_error "Make sure docker is running."
+
+[ -d "${WORKING_DIRECTORY}" ] || exit_with_error "Invalid directory path."
+
+# ================================================================================ #
+# ================================== ENTRYPOINT ================================== #
+# ================================================================================ #
+
+INDUCKER_CONTAINER_HOSTNAME="$(echo "${IMAGE}" | cut -d '/' -f 2)"
+INDUCKER_CONTAINER_NAME="inducker-${INDUCKER_CONTAINER_HOSTNAME}"
+
+RUN_ARGUEMENTS=(
+  --rm
+  --interactive
+  --tty
+  --name="${INDUCKER_CONTAINER_NAME}"
+  --hostname="${INDUCKER_CONTAINER_HOSTNAME}"
+  --volume="${WORKING_DIRECTORY}":"${MOUNT_LOCATION}"
+  --workdir="${MOUNT_LOCATION}"
+  --entrypoint="${ENTRYPOINT}"
+)
+
+if ((${#EXTRA_ARGS[@]} > 0)); then
+  RUN_ARGUEMENTS+=("${EXTRA_ARGS[@]}")
+fi
+
+docker run "${RUN_ARGUEMENTS[@]}" "${IMAGE}"

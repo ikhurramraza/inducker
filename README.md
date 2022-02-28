@@ -4,6 +4,14 @@ Bootstraps running a docker image in current directory.
 
 _The name "inducker" is inspired by a special kind of cricket delivery where the ball dips "in" before it reaches the batter. The default mount location is "lords" which is considered the home of cricket._
 
+## 💿 Installation
+
+#### Using Homebrew
+
+```bash
+brew install ikhurramraza/tap/inducker
+```
+
 ## 📖 Usage
 
 ```
@@ -30,6 +38,8 @@ git push origin "v[VERSION_TAG]"
 ```
 
 2. Create a release on GitHub.
+
+3. Update url and SHA in the Homebrew formula definition [here](https://github.com/ikhurramraza/homebrew-tap/blob/main/inducker.rb).
 
 ## 🤝 Contributing
 

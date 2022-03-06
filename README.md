@@ -25,6 +25,9 @@ OPTIONS:
   --directory       Which directory to mount as working directory.    Default: .
   --entrypoint      Command to launch inside the container.           Default: /bin/sh
   --mount-location  Working directory path.                           Default: /lords
+
+TEMPLATES:
+  inducker-ffmpeg   Uses jrottenberg/ffmpeg image.
 ```
 
 ## 🚀 Publishing

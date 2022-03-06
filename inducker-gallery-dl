@@ -1,0 +1,17 @@
+#!/bin/bash
+
+docker build --tag inducker-gallery-dl - <<DOCKERFILE
+  FROM python:alpine
+
+  RUN adduser -S deploy
+
+  USER deploy
+
+  RUN pip install --user gallery-dl
+
+  ENV PATH /home/deploy/.local/bin:$PATH
+
+  CMD ["/bin/bash"]
+DOCKERFILE
+
+inducker inducker-gallery-dl --mount-location /home/deploy/lords "$@"

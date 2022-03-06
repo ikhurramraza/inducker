@@ -1,0 +1,3 @@
+#!/bin/bash
+
+inducker jrottenberg/ffmpeg --entrypoint /bin/bash "$@"

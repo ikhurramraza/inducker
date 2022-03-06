@@ -42,6 +42,10 @@ OPTIONS:
   --directory       Which directory to mount as working directory.    Default: ${WORKING_DIRECTORY}
   --entrypoint      Command to launch inside the container.           Default: ${ENTRYPOINT}
   --mount-location  Working directory path.                           Default: ${MOUNT_LOCATION}
+
+TEMPLATES:
+  inducker-ffmpeg         Uses jrottenberg/ffmpeg image.
+  inducker-gallery-dl     Uses gallery-dl pip package.
 HELP
 }
 

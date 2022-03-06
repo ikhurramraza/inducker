@@ -27,7 +27,8 @@ OPTIONS:
   --mount-location  Working directory path.                           Default: /lords
 
 TEMPLATES:
-  inducker-ffmpeg   Uses jrottenberg/ffmpeg image.
+  inducker-ffmpeg         Uses jrottenberg/ffmpeg image.
+  inducker-gallery-dl     Uses gallery-dl pip package.
 ```
 
 ## 🚀 Publishing

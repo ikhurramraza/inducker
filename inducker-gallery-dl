@@ -9,7 +9,7 @@ docker build --tag inducker-gallery-dl - <<'DOCKERFILE'
 
   RUN pip install --user gallery-dl
 
-  ENV PATH /home/deploy/.local/bin:${PATH}
+  ENV PATH /home/deploy/.local/bin:$PATH
 
   CMD ["/bin/bash"]
 DOCKERFILE

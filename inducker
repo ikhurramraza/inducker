@@ -104,7 +104,12 @@ docker info >/dev/null 2>&1 || exit_with_error "Make sure docker is running."
 # ================================================================================ #
 
 INDUCKER_CONTAINER_HOSTNAME="$(echo "${IMAGE}" | cut -d '/' -f 2)"
-INDUCKER_CONTAINER_NAME="inducker-${INDUCKER_CONTAINER_HOSTNAME}"
+
+if [[ $INDUCKER_CONTAINER_HOSTNAME == inducker-* ]]; then
+  INDUCKER_CONTAINER_NAME="${INDUCKER_CONTAINER_HOSTNAME}"
+else
+  INDUCKER_CONTAINER_NAME="inducker-${INDUCKER_CONTAINER_HOSTNAME}"
+fi
 
 RUN_ARGUEMENTS=(
   --rm

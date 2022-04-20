@@ -1,17 +1,25 @@
 #!/bin/bash
 
-docker build --tag inducker-gallery-dl - <<'DOCKERFILE'
-  FROM python:alpine
+docker build \
+  --build-arg UID="$(id -u)" \
+  --build-arg GID="$(id -g)" \
+  --build-arg OSTYPE="$(uname)" \
+  --tag inducker-gallery-dl \
+  - <<'DOCKERFILE'
+  FROM python:slim
 
-  RUN adduser -S deploy
+  ARG UID=1000
+  ARG GID=1000
+  ARG OSTYPE=Linux
+
+  RUN if [[$OSTYPE == Linux]]; then groupadd --gid $GID deploy; fi
+  RUN useradd --create-home --uid $UID --gid $GID deploy
 
   USER deploy
 
   RUN pip install --user gallery-dl
 
   ENV PATH /home/deploy/.local/bin:$PATH
-
-  CMD ["/bin/bash"]
 DOCKERFILE
 
-inducker inducker-gallery-dl --mount-location /home/deploy/lords "$@"
+inducker inducker-gallery-dl --entrypoint /bin/bash --mount-location /home/deploy/lords "$@"

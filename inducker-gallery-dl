@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker build --tag inducker-gallery-dl - <<DOCKERFILE
+docker build --tag inducker-gallery-dl - <<'DOCKERFILE'
   FROM python:alpine
 
   RUN adduser -S deploy
